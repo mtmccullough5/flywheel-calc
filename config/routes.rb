@@ -3,7 +3,8 @@ Rails.application.routes.draw do
     get 'materials/create'
     get 'materials/update'
     get 'materials/destroy'
-    get 'materials/prop_request'
+    get 'materials/get_properties'
+    get 'materials/index'
   end
   namespace :api do
     #API ROUTES SHOULD GO HERE

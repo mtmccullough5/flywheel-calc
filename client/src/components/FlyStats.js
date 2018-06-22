@@ -1,7 +1,9 @@
 import React from 'react'
 
 class FlyStats extends React.Component {
-  render () 
+  render () {
+    return <div></div>
+  }
 
 }
 

@@ -5,30 +5,31 @@ import { Link } from 'react-router-dom'
 import { Dropdown, Form} from 'semantic-ui-react'
 
 class FlyBuild extends React.Component {
-  state = { materials: [] }
+  state = { materials: [], material: [] }
 
   componentDidMount() {
     axios.get('/api/materials')
-      .then( ({ data, headers }) => {
+      .then( ({ data }) => {
         this.setState({ materials: data })
-        this.props.dispatch(setHeaders(headers))
       });
   }
 
-  handleChange = (e, { name, value }) => this.setState({ [name]: value })
+  onMaterialSelect = ( selection ) => {
+    const material = this.state.materials.find( f => f.name === selection.name);
+    this.setState(material);
+  }
 
   render() {
     let { materials } = this.state;
     return (
       <div>
-        This is where the magic will happen
         <Form>
           <Form.Field>
             <Dropdown 
               placeholder='Select Material' 
               fluid search selection 
               options={materials}
-              onChange={this.handleChange} 
+              onChange={this.onMaterialSelect}
             />
           </Form.Field>
         </Form>
@@ -37,5 +38,7 @@ class FlyBuild extends React.Component {
     )
   }
 }
-
-export default FlyBuild
+const mapStateToProps = (state) => {
+  return { material: state.material }
+}
+export default connect(mapStateToProps)(FlyBuild)
