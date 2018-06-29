@@ -14,10 +14,8 @@ class FlyBuild extends React.Component {
           mat.key = mat.name;
           mat.text = mat.name;
           mat.value = mat.name;
-          console.log(mat)
           return mat;
         });
-        console.log(newMaterials)
         this.setState({materials: newMaterials });
       });
   }
@@ -36,9 +34,10 @@ class FlyBuild extends React.Component {
   onMaterialSelect = ( e, data ) => {
     let material = []
     data.options.map( mat => {
-      if (mat.name === data.value) 
+      if (mat.name === data.value) {
         material = mat
-        return material
+      }
+      return material
     })
     this.setState({material});
   }
