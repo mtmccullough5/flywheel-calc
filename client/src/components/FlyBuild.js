@@ -2,49 +2,89 @@ import React from 'react'
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
-import { Dropdown, Form} from 'semantic-ui-react'
+import { Dropdown, Form, Card, Container } from 'semantic-ui-react'
 
 class FlyBuild extends React.Component {
-  state = { materials: [], material: [] }
+  state = { materials: [], material: [], radius: 0.0, height: 0.0 }
 
   componentDidMount() {
     axios.get('/api/materials/index')
       .then( ({ data }) => {
         const newMaterials = data.map((mat) => {
-          mat.key = mat.id;
+          mat.key = mat.name;
           mat.text = mat.name;
           mat.value = mat.name;
+          console.log(mat)
           return mat;
         });
+        console.log(newMaterials)
         this.setState({materials: newMaterials });
       });
   }
 
-  handleChange = (e, { value }) => this.setState({ value })
+  handleChange = ({ target: { name, value } }) => {
+    this.setState({ [name]: value });
+  }
 
-  onMaterialSelect = ( selection ) => {
-    const material = this.state.materials.find( f => f.name === selection.name);
-    
-    this.setState(material);
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const app = { ...this.state };
+    this.props.submit(app)
+    this.setState({ ...this.defaultValue });
+  }
+
+  onMaterialSelect = ( e, data ) => {
+    let material = []
+    data.options.map( mat => {
+      if (mat.name === data.value) 
+        material = mat
+        return material
+    })
+    this.setState({material});
   }
 
   render() {
-    const { material } = this.state
+    const { materials, material, radius, height} = this.state
     return (
       <div>
-        <Form>
-          <Form.Field>
-            <Dropdown 
-              placeholder='Select Material' 
-              fluid
-              selection
-              onChange={this.handleChange}
-              options={this.state.materials}
-              value={material.name}
-            >
-            </Dropdown>
-          </Form.Field>
-        </Form>
+        <Container textAlign='center' >
+          <Card className="margery">
+            <Card.Header as='h2'>Choose Flywheel Properties</Card.Header>
+            <Card.Content>
+              <Form>
+                <Form.Field>
+                  <Dropdown 
+                    placeholder='Select Material' 
+                    fluid
+                    selection
+                    onChange={this.onMaterialSelect}
+                    options={materials}
+                    id='material'
+                    name='material'
+                    value={material.name}
+                  >
+                  </Dropdown>
+                </Form.Field>    
+                <Form.Input 
+                  fluid 
+                  label="Radius" 
+                  placeholder="Radius"
+                  name="radius"
+                  value={radius}
+                  onChange={this.handleChange}
+                />
+                <Form.Input 
+                  fluid 
+                  label='Height' 
+                  placeholder='Height' 
+                  name='height'
+                  value={height}
+                  onChange={this.handleChange}
+                />
+              </Form>
+            </Card.Content>
+          </Card>
+        </Container>
         <Link to="/Stats">See The Stats</Link>
       </div>
     )
