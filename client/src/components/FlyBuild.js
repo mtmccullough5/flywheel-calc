@@ -8,29 +8,41 @@ class FlyBuild extends React.Component {
   state = { materials: [], material: [] }
 
   componentDidMount() {
-    axios.get('/api/materials')
+    axios.get('/api/materials/index')
       .then( ({ data }) => {
-        this.setState({ materials: data })
+        const newMaterials = data.map((mat) => {
+          mat.key = mat.id;
+          mat.text = mat.name;
+          mat.value = mat.name;
+          return mat;
+        });
+        this.setState({materials: newMaterials });
       });
   }
 
+  handleChange = (e, { value }) => this.setState({ value })
+
   onMaterialSelect = ( selection ) => {
     const material = this.state.materials.find( f => f.name === selection.name);
+    
     this.setState(material);
   }
 
   render() {
-    let { materials } = this.state;
+    const { material } = this.state
     return (
       <div>
         <Form>
           <Form.Field>
             <Dropdown 
               placeholder='Select Material' 
-              fluid search selection 
-              options={materials}
-              onChange={this.onMaterialSelect}
-            />
+              fluid
+              selection
+              onChange={this.handleChange}
+              options={this.state.materials}
+              value={material.name}
+            >
+            </Dropdown>
           </Form.Field>
         </Form>
         <Link to="/Stats">See The Stats</Link>
